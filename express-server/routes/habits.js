@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// Route: Add Habit
+//Add Habit
 router.post('/add', (req, res) => {
   const { name, frequency, goal_days } = req.body;
   db.query(
@@ -15,7 +15,7 @@ router.post('/add', (req, res) => {
   );
 });
 
-// Route: Log Completion
+//Log Completion
 router.post('/log/:id', (req, res) => {
     const id = req.params.id;
   
@@ -33,7 +33,7 @@ router.post('/log/:id', (req, res) => {
     );
   });
 
-// Route: Edit Habit
+//Edit Habit
 router.put('/edit/:id', (req, res) => {
     const id = req.params.id;
     const { name, frequency, goal_days } = req.body;
@@ -48,7 +48,7 @@ router.put('/edit/:id', (req, res) => {
     );
   });
 
-// Route: Delete Habit
+//Delete Habit
 router.delete('/delete/:id', (req, res) => {
     const id = req.params.id;
   
@@ -58,7 +58,7 @@ router.delete('/delete/:id', (req, res) => {
     });
   });
   
-// Route: View All Habits with Streaks
+//View All Habits with Streaks
 router.get('/streaks', (req, res) => {
     db.query('SELECT * FROM habits', (err, results) => {
       if (err) return res.status(500).json({ error: err });
@@ -66,7 +66,7 @@ router.get('/streaks', (req, res) => {
     });
   });
 
-// Route: Reset Habit
+//Reset Habit
 router.put('/reset/:id', (req, res) => {
     const id = req.params.id;
   
