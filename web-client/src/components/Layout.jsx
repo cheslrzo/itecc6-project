@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 const Layout = () => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="flex-1 p-6 bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen bg-[#1e293b] text-white">
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <div className="flex-1 flex flex-col">
         <Header />
-        <Outlet />
-      </main>
+        <main className="p-6 flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

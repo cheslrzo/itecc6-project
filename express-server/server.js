@@ -1,14 +1,19 @@
 const express = require('express');
 const cors = require('cors');
+const habitsRouter = require('./routes/habits');
+
 const app = express();
-const habitRoutes = require('./routes/habits');
-const db = require('./db');
+const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/habits', habitRoutes);
+app.use('/api/habits', habitsRouter);
 
-app.listen(3001, () => {
-  console.log('Server is running on http://localhost:3001');
+app.get('/', (req, res) => {
+  res.send('Habit Tracker API is running');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });

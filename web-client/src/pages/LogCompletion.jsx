@@ -5,6 +5,7 @@ const LogCompletion = () => {
   const [habits, setHabits] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState('');
   const [completed, setCompleted] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     axios.get('http://localhost:3001/api/habits')
@@ -16,48 +17,48 @@ const LogCompletion = () => {
     if (completed && selectedHabit) {
       axios.post(`http://localhost:3001/api/habits/log/${selectedHabit}`)
         .then(() => {
-          alert('Habit logged!');
+          setMessage('Habit logged successfully!');
           setSelectedHabit('');
           setCompleted(false);
+          setTimeout(() => setMessage(''), 3000);
         })
-        .catch(err => console.error('Log error:', err));
+        .catch(err => {
+          console.error('Log error:', err);
+          setMessage('Failed to log habit.');
+          setTimeout(() => setMessage(''), 3000);
+        });
     }
   };
 
   return (
-    <div className="p-8 max-w-md mx-auto bg-white shadow rounded">
+    <div className="p-6 max-w-lg mx-auto bg-[#1e293b] text-white rounded shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Log Completion</h2>
-      <label className="block mb-2">Add Habit</label>
+
+      <label className="block mb-2 font-semibold">Select Habit</label>
       <select
-        className="w-full border px-4 py-2 mb-4"
+        className="w-full bg-gray-700 border border-gray-600 px-4 py-2 rounded mb-4"
         value={selectedHabit}
         onChange={(e) => setSelectedHabit(e.target.value)}
       >
-        <option value="">Select a habit</option>
+        <option value="">-- Choose a habit --</option>
         {habits.map(h => (
           <option key={h.id} value={h.id}>{h.name}</option>
         ))}
       </select>
 
-      <label className="flex items-center mb-4">
+      <label className="flex items-center mb-6">
         <input
           type="checkbox"
           className="mr-2"
           checked={completed}
           onChange={(e) => setCompleted(e.target.checked)}
         />
-        Completed Today
+        Mark as Completed Today
       </label>
 
-      <div className="flex justify-between">
+      <div className="flex justify-end gap-3">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={handleLog}
-        >
-          Yes
-        </button>
-        <button
-          className="bg-gray-300 text-black px-4 py-2 rounded"
+          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
           onClick={() => {
             setSelectedHabit('');
             setCompleted(false);
@@ -65,7 +66,24 @@ const LogCompletion = () => {
         >
           Cancel
         </button>
+        <button
+          className={`px-4 py-2 rounded text-white ${
+            selectedHabit && completed
+              ? 'bg-blue-600 hover:bg-blue-700'
+              : 'bg-blue-900 cursor-not-allowed'
+          }`}
+          onClick={handleLog}
+          disabled={!selectedHabit || !completed}
+        >
+          Yes, Log It
+        </button>
       </div>
+
+      {message && (
+        <div className="mt-4 p-3 bg-green-700 text-white rounded text-center">
+          {message}
+        </div>
+      )}
     </div>
   );
 };
