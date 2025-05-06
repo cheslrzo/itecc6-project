@@ -1,42 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  TextInput,
+  Alert,
+} from 'react-native';
 
-// Define the Habit type
 interface Habit {
   id: number;
   name: string;
   frequency: string;
   streak: number;
+  goal: string;
 }
 
-// Sample habits data
 const sampleHabits: Habit[] = [
-  { id: 1, name: 'Morning Meditation', frequency: 'Daily', streak: 5 },
-  { id: 2, name: 'Read for 30 minutes', frequency: 'Daily', streak: 12 },
-  { id: 3, name: 'Drink 8 glasses of water', frequency: 'Daily', streak: 3 },
-  { id: 4, name: 'Exercise', frequency: 'Mon, Wed, Fri', streak: 7 },
-  { id: 5, name: 'Call parents', frequency: 'Weekly', streak: 2 },
+  { id: 1, name: 'Walking', frequency: 'Daily', streak: 0, goal: '7 days' },
+  { id: 2, name: 'Playing Basketball', frequency: 'Daily', streak: 2, goal: '12 days' },
+  { id: 3, name: 'Jogging', frequency: 'Daily', streak: 0, goal: '20 days' },
+  { id: 4, name: 'Driving', frequency: 'Monthly', streak: 3, goal: '12 days' },
+  { id: 5, name: 'Cooking', frequency: 'Weekly', streak: 0, goal: '15 days' },
 ];
 
 export default function MyHabits() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [habitName, setHabitName] = useState('');
+  const [habitFrequency, setHabitFrequency] = useState('');
+  const [habitGoal, setHabitGoal] = useState('');
 
   const handleEditHabit = (habit: Habit) => {
     setEditingHabit(habit);
     setHabitName(habit.name);
+    setHabitFrequency(habit.frequency);
+    setHabitGoal(habit.goal);
     setModalVisible(true);
   };
 
   const handleDeleteHabit = (habitId: number) => {
     Alert.alert('Delete Habit', 'Are you sure you want to delete this habit?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
+      { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
+        style: 'destructive',
         onPress: () => {
           Alert.alert('Habit Deleted', `Habit with ID: ${habitId} has been deleted.`);
         },
@@ -45,81 +55,105 @@ export default function MyHabits() {
   };
 
   const handleSaveHabit = () => {
-    if (habitName.trim() === '') {
+    if (!habitName.trim()) {
       Alert.alert('Validation', 'Please enter a habit name.');
       return;
     }
-    if (editingHabit) {
-      Alert.alert('Success', `Habit "${habitName}" updated!`);
-    } else {
-      Alert.alert('Success', `New habit "${habitName}" added!`);
-    }
+    Alert.alert('Success', editingHabit ? `Habit updated!` : `New habit added!`);
     setHabitName('');
+    setHabitFrequency('');
+    setHabitGoal('');
+    setEditingHabit(null);
     setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My Habits</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.pageTitle}>My Habits</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setEditingHabit(null);
+            setHabitName('');
+            setHabitFrequency('');
+            setHabitGoal('');
+            setModalVisible(true);
+          }}
+          style={styles.addButton}
+        >
+          <Text style={styles.addButtonText}>+ Add Habit</Text>
+        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.habitList}>
-        {sampleHabits.map((habit) => (
-          <View key={habit.id} style={styles.habitCard}>
-            <Text style={styles.habitName}>{habit.name}</Text>
-            <Text style={styles.habitFrequency}>Frequency: {habit.frequency}</Text>
-            <Text style={styles.streakText}>Current streak: {habit.streak} days</Text>
+      <View style={styles.tableHeader}>
+        <Text style={[styles.column, { flex: 2 }]}>Habit</Text>
+        <Text style={styles.column}>Streak</Text>
+        <Text style={styles.column}>Frequency</Text>
+        <Text style={styles.column}>Goal</Text>
+        <Text style={styles.column}>Action</Text>
+      </View>
 
-            <View style={styles.actionButtons}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => handleEditHabit(habit)}
-              >
-                <Text style={styles.actionButtonText}>Edit</Text>
+      <ScrollView>
+        {sampleHabits.map((habit) => (
+          <View key={habit.id} style={styles.tableRow}>
+            <Text style={[styles.cell, { flex: 2 }]}>{habit.name}</Text>
+            <Text style={styles.cell}>{habit.streak}</Text>
+            <Text style={styles.cell}>{habit.frequency}</Text>
+            <Text style={styles.cell}>{habit.goal}</Text>
+            <View style={styles.actionCell}>
+              <TouchableOpacity onPress={() => handleEditHabit(habit)}>
+                <Text style={styles.editIcon}>✏️</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.deleteButton]}
-                onPress={() => handleDeleteHabit(habit.id)}
-              >
-                <Text style={styles.deleteButtonText}>Delete</Text>
+              <TouchableOpacity onPress={() => handleDeleteHabit(habit.id)}>
+                <Text style={styles.deleteIcon}>🗑️</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>+ Add New Habit</Text>
-      </TouchableOpacity>
-
-      {/* Modal for Add/Edit Habit */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+      {/* Modal */}
+      <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              {editingHabit ? 'Edit Habit' : 'Add New Habit'}
+              {editingHabit ? 'Edit Habit' : 'Add Habit'}
             </Text>
+
             <TextInput
               style={styles.input}
-              placeholder="Enter habit name"
+              placeholder="Habit name"
               value={habitName}
               onChangeText={setHabitName}
             />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSaveHabit}>
+            <TextInput
+              style={styles.input}
+              placeholder="Frequency (e.g. Daily)"
+              value={habitFrequency}
+              onChangeText={setHabitFrequency}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Goal (e.g. 7 days)"
+              value={habitGoal}
+              onChangeText={setHabitGoal}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.modalButton} onPress={handleSaveHabit}>
                 <Text style={styles.modalButtonText}>
-                  {editingHabit ? 'Save Changes' : 'Add Habit'}
+                  {editingHabit ? 'Save' : 'Add'}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => {
+                  setModalVisible(false);
+                  setEditingHabit(null);
+                  setHabitName('');
+                  setHabitFrequency('');
+                  setHabitGoal('');
+                }}
               >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
@@ -134,135 +168,106 @@ export default function MyHabits() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#0f172a',
     padding: 16,
-    backgroundColor: '#f5f5f5',
   },
-  header: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: 12,
   },
-  title: {
-    fontSize: 24,
+  pageTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
-  },
-  habitList: {
-    marginTop: 16,
-  },
-  habitCard: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  habitName: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  habitFrequency: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 4,
-  },
-  streakText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 12,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  actionButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginLeft: 8,
-  },
-  actionButtonText: {
     color: 'white',
-    fontWeight: '600',
-  },
-  deleteButton: {
-    backgroundColor: '#FF3B30',
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontWeight: '600',
   },
   addButton: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 16,
+    backgroundColor: '#3b82f6',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
   },
   addButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#334155',
+    paddingBottom: 8,
+    marginBottom: 6,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomColor: '#1e293b',
+    borderBottomWidth: 1,
+  },
+  column: {
+    flex: 1,
+    color: '#94a3b8',
+    fontWeight: '600',
+  },
+  cell: {
+    flex: 1,
+    color: 'white',
+  },
+  actionCell: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 10,
+  },
+  editIcon: {
+    fontSize: 18,
+    color: '#facc15',
+  },
+  deleteIcon: {
+    fontSize: 18,
+    color: '#ef4444',
   },
   modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContent: {
+  modalContainer: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     width: '80%',
-    alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 20,
-    fontSize: 16,
-    width: '100%',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 10,
-  },
-  saveButton: {
-    flex: 1,
-    backgroundColor: '#007AFF',
-    padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
-    marginRight: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  modalButton: {
+    backgroundColor: '#3b82f6',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
   cancelButton: {
-    flex: 1,
     backgroundColor: 'gray',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginLeft: 8,
   },
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });
