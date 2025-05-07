@@ -26,7 +26,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // dark blue background
+    backgroundColor: '#0f172a', 
     padding: 20,
   },
   header: {
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   subHeader: {
     fontSize: 18,
-    color: '#cbd5e1', // slate-300
+    color: '#cbd5e1', 
     marginBottom: 16,
   },
   cardContainer: {
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: '#1e293b', // slate-800
+    backgroundColor: '#1e293b', 
     borderRadius: 12,
     padding: 20,
     flex: 1,

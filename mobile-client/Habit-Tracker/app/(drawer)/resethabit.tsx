@@ -12,7 +12,6 @@ export default function ResetHabitScreen() {
   };
 
   const handleReset = () => {
-    // Add logic here for resetting the habit
     console.log(`Resetting habit: ${selectedHabit}`);
   };
 

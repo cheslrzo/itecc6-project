@@ -27,13 +27,13 @@ export default function Start() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0b1120', // very dark blue background
+    backgroundColor: '#0b1120', 
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   card: {
-    backgroundColor: '#1e293b', // dark slate blue card
+    backgroundColor: '#1e293b', 
     borderRadius: 16,
     paddingVertical: 40,
     paddingHorizontal: 24,
@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 10, // Android shadow
+    elevation: 10, 
   },
   header: {
     fontSize: 14,
-    color: '#cbd5e1', // slate-300
+    color: '#cbd5e1', 
     marginBottom: 8,
   },
   title: {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 24,
-    backgroundColor: '#2563eb', // blue-600
+    backgroundColor: '#2563eb', 
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 9999,
